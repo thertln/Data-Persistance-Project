@@ -20,6 +20,7 @@ public class MenuUIHandler : MonoBehaviour
     {
         SceneManager.LoadScene(1);
         MenuManager.Instance.SaveUsername();
+
     }
 
 
