@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -18,10 +19,16 @@ public class MainManager : MonoBehaviour
     
     private bool m_GameOver = false;
 
+    public Text usernameTxt;
+    public Text bestscore;
+
     
     // Start is called before the first frame update
     void Start()
     {
+        usernameTxt.text = MenuManager.Instance.username;
+        bestscore.text = "Bestscore: " + MenuManager.Instance.highscoreUsername + " :" + MenuManager.Instance.highscore.ToString();
+
         const float step = 0.6f;
         int perLine = Mathf.FloorToInt(4.0f / step);
         
@@ -55,8 +62,12 @@ public class MainManager : MonoBehaviour
         }
         else if (m_GameOver)
         {
+            SaveHighScore();
+
             if (Input.GetKeyDown(KeyCode.Space))
             {
+               // SceneManager.LoadScene(0);
+
                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
             }
         }
@@ -73,4 +84,46 @@ public class MainManager : MonoBehaviour
         m_GameOver = true;
         GameOverText.SetActive(true);
     }
+
+
+    [System.Serializable]
+    class Highscore
+    {
+       
+        public string name;
+        public int score;
+    }
+
+
+
+    public void SaveHighScore()
+    {
+
+        bool ishigh = MenuManager.Instance.highscore < m_Points;
+
+      
+
+        if (ishigh)
+        {
+            Highscore data = new Highscore();
+            data.name = MenuManager.Instance.username;
+            data.score = m_Points;
+          
+
+            string json = JsonUtility.ToJson(data);
+
+            File.WriteAllText(Application.persistentDataPath + "/highscore.json", json);
+
+
+            bestscore.text = "Bestscore: " + MenuManager.Instance.highscoreUsername + " :" + m_Points.ToString();
+
+        }
+   
+    }
+
+
+ 
+
+
+
 }
